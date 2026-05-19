@@ -18,11 +18,7 @@ public class Theme {
     }
 
     public Theme(String name, String description, String thumbnail) {
-        validateName(name);
-        this.id = null;
-        this.name = name;
-        this.description = description;
-        this.thumbnail = thumbnail;
+        this(null, name, description, thumbnail);
     }
 
     private void validateName(String name) {

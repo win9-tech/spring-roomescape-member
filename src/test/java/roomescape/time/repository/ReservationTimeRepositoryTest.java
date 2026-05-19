@@ -33,7 +33,7 @@ class ReservationTimeRepositoryTest {
     @Test
     void 존재하는_id로_조회하면_예약_시간을_Optional로_반환한다() {
         ReservationTime saved = reservationTimeRepository.save(
-                new ReservationTime(null, LocalTime.of(11, 30)));
+                new ReservationTime(LocalTime.of(11, 30)));
 
         Optional<ReservationTime> result = reservationTimeRepository.findById(saved.getId());
 
@@ -65,7 +65,7 @@ class ReservationTimeRepositoryTest {
     @Test
     void 시간을_저장하면_생성된_id와_시작_시간을_반환한다() {
         ReservationTime saved = reservationTimeRepository.save(
-                new ReservationTime(null, LocalTime.of(10, 0)));
+                new ReservationTime(LocalTime.of(10, 0)));
 
         assertThat(saved.getId()).isPositive();
         assertThat(saved.getStartAt()).isEqualTo(LocalTime.of(10, 0));
@@ -73,16 +73,16 @@ class ReservationTimeRepositoryTest {
 
     @Test
     void 같은_시작_시간을_중복_생성할_수_없다() {
-        reservationTimeRepository.save(new ReservationTime(null, LocalTime.of(10, 0)));
+        reservationTimeRepository.save(new ReservationTime(LocalTime.of(10, 0)));
 
-        assertThatThrownBy(() -> reservationTimeRepository.save(new ReservationTime(null, LocalTime.of(10, 0))))
+        assertThatThrownBy(() -> reservationTimeRepository.save(new ReservationTime(LocalTime.of(10, 0))))
                 .isInstanceOf(RuntimeException.class);
     }
 
     @Test
     void 존재하는_id로_삭제하면_해당_시간이_삭제된다() {
         ReservationTime saved = reservationTimeRepository.save(
-                new ReservationTime(null, LocalTime.of(10, 0)));
+                new ReservationTime(LocalTime.of(10, 0)));
 
         reservationTimeRepository.deleteById(saved.getId());
 

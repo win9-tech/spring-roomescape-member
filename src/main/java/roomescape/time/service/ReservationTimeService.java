@@ -29,7 +29,7 @@ public class ReservationTimeService {
 
     @Transactional
     public ReservationTime createTime(LocalTime startAt) {
-        ReservationTime reservationTime = new ReservationTime(null, startAt);
+        ReservationTime reservationTime = new ReservationTime(startAt);
         return reservationTimeRepository.save(reservationTime);
     }
 

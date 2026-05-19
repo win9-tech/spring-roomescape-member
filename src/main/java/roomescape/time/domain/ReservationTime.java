@@ -19,6 +19,10 @@ public class ReservationTime {
         this.startAt = startAt;
     }
 
+    public ReservationTime(LocalTime startAt) {
+        this(null, startAt);
+    }
+
     public boolean isPast(LocalDate date, LocalDateTime now) {
         return LocalDateTime.of(date, startAt).isBefore(now);
     }
