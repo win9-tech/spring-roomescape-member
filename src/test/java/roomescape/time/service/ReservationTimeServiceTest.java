@@ -33,6 +33,6 @@ class ReservationTimeServiceTest {
         assertThatThrownBy(() -> reservationTimeService.deleteTime(999L))
                 .isInstanceOf(BusinessConflictException.class)
                 .extracting(e -> ((BusinessException) e).getErrorCode())
-                        .isEqualTo(ErrorCode.RESERVATION_TIME_IN_USE);
+                .isEqualTo(ErrorCode.RESERVATION_TIME_IN_USE);
     }
 }
