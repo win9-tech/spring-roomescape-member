@@ -156,14 +156,9 @@ public class ReservationRepository {
                 reservation.getId());
     }
 
-    public int deleteById(long id) {
+    public void delete(Reservation reservation) {
         String sql = "DELETE FROM reservation WHERE id = ?";
-        return jdbcTemplate.update(sql, id);
-    }
-
-    public int deleteByIdAndName(long id, String name) {
-        String sql = "DELETE FROM reservation WHERE id = ? AND name = ?";
-        return jdbcTemplate.update(sql, id, name);
+        jdbcTemplate.update(sql, reservation.getId());
     }
 
     private RowMapper<Reservation> reservationRowsMapper() {

@@ -80,7 +80,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
 
         reservation.checkCancellable(name, LocalDateTime.now(clock));
-        reservationRepository.deleteByIdAndName(id, name);
+        reservationRepository.delete(reservation);
     }
 
     private void checkDuplicated(Reservation reservation) {
