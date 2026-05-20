@@ -92,7 +92,7 @@ public class ReservationRepository {
         return jdbcTemplate.query(sql, reservationRowsMapper(), name, size, offset);
     }
 
-    public Optional<Reservation> findBySchedule(Reservation reservation) {
+    public Optional<Reservation> findBySchedule(LocalDate date, long timeId, long themeId) {
         String sql = """
                 SELECT r.id          AS reservation_id,
                        r.name        AS reservation_name,
@@ -112,9 +112,9 @@ public class ReservationRepository {
                 """;
         try {
             Reservation found = jdbcTemplate.queryForObject(sql, reservationRowsMapper(),
-                    reservation.getDate(),
-                    reservation.getTime().getId(),
-                    reservation.getTheme().getId());
+                    date,
+                    timeId,
+                    themeId);
             return Optional.ofNullable(found);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

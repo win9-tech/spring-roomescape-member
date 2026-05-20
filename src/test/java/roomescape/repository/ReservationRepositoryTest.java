@@ -177,7 +177,8 @@ class ReservationRepositoryTest {
         Reservation first = reservationRepository.save(new Reservation(
                 null, "브라운", LocalDate.of(2026, 5, 10), time, theme));
 
-        Optional<Reservation> result = reservationRepository.findBySchedule(first);
+        Optional<Reservation> result = reservationRepository.findBySchedule(
+                first.getDate(), first.getTime().getId(), first.getTheme().getId());
 
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(first.getId());
@@ -188,7 +189,8 @@ class ReservationRepositoryTest {
         Reservation reservation = new Reservation(
                 null, "브라운", LocalDate.of(2026, 5, 10), time, theme);
 
-        Optional<Reservation> result = reservationRepository.findBySchedule(reservation);
+        Optional<Reservation> result = reservationRepository.findBySchedule(
+                reservation.getDate(), reservation.getTime().getId(), reservation.getTheme().getId());
 
         assertThat(result).isEmpty();
     }

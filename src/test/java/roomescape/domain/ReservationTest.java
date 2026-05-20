@@ -118,24 +118,23 @@ class ReservationTest {
     }
 
     @Test
-    void 다른_예약과_일정이_겹치면_예약할_수_없다() {
-        Reservation reservation = new Reservation(
-                7L, "브라운", LocalDate.of(2026, 5, 10), TIME, THEME);
-        Reservation other = new Reservation(
-                8L, "어셔", LocalDate.of(2026, 5, 10), TIME, THEME);
-
-        assertThatThrownBy(() -> reservation.checkDuplicatedWith(other))
-                .isInstanceOf(DomainConflictException.class);
-    }
-
-    @Test
-    void 자기_자신과_일정이_겹치는_것은_중복이_아니다() {
+    void 같은_id를_가진_예약은_같은_예약이다() {
         Reservation reservation = new Reservation(
                 7L, "브라운", LocalDate.of(2026, 5, 10), TIME, THEME);
         Reservation same = new Reservation(
                 7L, "브라운", LocalDate.of(2026, 5, 10), TIME, THEME);
 
-        assertThatNoException().isThrownBy(() -> reservation.checkDuplicatedWith(same));
+        assertThat(reservation.isSameReservation(same)).isTrue();
+    }
+
+    @Test
+    void 다른_id를_가진_예약은_같은_예약이_아니다() {
+        Reservation reservation = new Reservation(
+                7L, "브라운", LocalDate.of(2026, 5, 10), TIME, THEME);
+        Reservation other = new Reservation(
+                8L, "어셔", LocalDate.of(2026, 5, 10), TIME, THEME);
+
+        assertThat(reservation.isSameReservation(other)).isFalse();
     }
 
     @Test

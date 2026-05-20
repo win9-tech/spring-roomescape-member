@@ -67,7 +67,7 @@ class ReservationServiceTest {
         Theme theme = new Theme(1L, "공포방", "무서운방입니다.", "image-url");
         when(reservationTimeRepository.findById(anyLong())).thenReturn(Optional.of(newTime));
         when(themeRepository.findById(anyLong())).thenReturn(Optional.of(theme));
-        when(reservationRepository.findBySchedule(any(Reservation.class)))
+        when(reservationRepository.findBySchedule(any(LocalDate.class), anyLong(), anyLong()))
                 .thenReturn(Optional.of(new Reservation(
                         1L, "브라운", LocalDate.of(2026, 5, 13), newTime, theme)));
 
@@ -167,7 +167,7 @@ class ReservationServiceTest {
         );
         when(reservationRepository.findById(7L)).thenReturn(Optional.of(reservation));
         when(reservationTimeRepository.findById(2L)).thenReturn(Optional.of(newTime));
-        when(reservationRepository.findBySchedule(any(Reservation.class)))
+        when(reservationRepository.findBySchedule(any(LocalDate.class), anyLong(), anyLong()))
                 .thenReturn(Optional.of(new Reservation(
                         8L,
                         "어셔",

@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
-import roomescape.domain.exception.DomainConflictException;
 import roomescape.repository.ReservationRepository;
 import roomescape.repository.ReservationTimeRepository;
 import roomescape.repository.ThemeRepository;
@@ -84,10 +83,15 @@ public class ReservationService {
     }
 
     private void checkDuplicated(Reservation reservation) {
-        try {
-            reservationRepository.findBySchedule(reservation)
-                    .ifPresent(reservation::checkDuplicatedWith);
-        } catch (DomainConflictException e) {
+        boolean duplicated = reservationRepository.findBySchedule(
+                        reservation.getDate(),
+                        reservation.getTime().getId(),
+                        reservation.getTheme().getId()
+                )
+                .filter(found -> !reservation.isSameReservation(found))
+                .isPresent();
+
+        if (duplicated) {
             throw new BusinessConflictException(ErrorCode.DUPLICATE_RESERVATION);
         }
     }
