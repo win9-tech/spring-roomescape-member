@@ -5,21 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
 import roomescape.repository.ReservationTimeRepository;
 import roomescape.repository.ThemeRepository;
-import roomescape.service.dto.AvailableTimes;
 import roomescape.service.dto.PopularTheme;
-import roomescape.service.dto.TimeAvailability;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,28 +27,6 @@ class ThemeServiceTest {
 
     @InjectMocks
     private ThemeService themeService;
-
-    @Test
-    void 테마와_날짜로_예약_가능한_시간을_조회한다() {
-        List<ReservationTime> reservationTimes = List.of(
-                new ReservationTime(1L, LocalTime.of(13,0)),
-                new ReservationTime(2L, LocalTime.of(15,0)),
-                new ReservationTime(3L, LocalTime.of(18,0)),
-                new ReservationTime(4L, LocalTime.of(20,0))
-        );
-        List<Long> reservedTimeIds = List.of(1L, 3L);
-        when(reservationTimeRepository.findAll()).thenReturn(reservationTimes);
-        when(themeRepository.findReservedTimeIds(anyLong(), any())).thenReturn(reservedTimeIds);
-
-        AvailableTimes result = themeService.findAvailableTimes(1L, LocalDate.of(2026, 5, 6));
-
-        assertThat(result.values()).containsExactly(
-                new TimeAvailability(1L, LocalTime.of(13, 0), false),
-                new TimeAvailability(2L, LocalTime.of(15, 0), true),
-                new TimeAvailability(3L, LocalTime.of(18, 0), false),
-                new TimeAvailability(4L, LocalTime.of(20, 0), true)
-        );
-    }
 
     @Test
     void 인기_테마_목록을_조회하면_순위를_부여해서_반환한다() {

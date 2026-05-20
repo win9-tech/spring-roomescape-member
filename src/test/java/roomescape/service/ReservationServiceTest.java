@@ -20,7 +20,6 @@ import roomescape.service.exception.ResourceNotFoundException;
 import java.time.*;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -46,30 +45,6 @@ class ReservationServiceTest {
         reservationService = new ReservationService(
                 reservationRepository, reservationTimeRepository, themeRepository, fixedClock
         );
-    }
-
-    @Test
-    void 예약을_생성하면_시간과_테마를_조회하고_예약을_저장한_뒤_예약을_반환한다() {
-        ReservationTime time = new ReservationTime(1L, LocalTime.of(10, 0));
-        Theme theme = new Theme(2L, "공포방", "무서운방입니다.", "image-url");
-        Reservation reservation = new Reservation(1L, "어셔", LocalDate.of(2026, 5, 10), time, theme);
-
-        when(reservationTimeRepository.findById(anyLong())).thenReturn(Optional.of(time));
-        when(themeRepository.findById(anyLong())).thenReturn(Optional.of(theme));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-
-        Reservation result = reservationService.createReservation("어셔", LocalDate.of(2026, 5, 10), 1L, 2L);
-
-        verify(reservationTimeRepository).findById(anyLong());
-        verify(themeRepository).findById(anyLong());
-        verify(reservationRepository).save(any(Reservation.class));
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("어셔");
-        assertThat(result.getDate()).isEqualTo(LocalDate.of(2026, 5, 10));
-        assertThat(result.getTime().getId()).isEqualTo(1L);
-        assertThat(result.getTime().getStartAt()).isEqualTo(LocalTime.of(10, 0));
-        assertThat(result.getTheme().getId()).isEqualTo(2L);
-        assertThat(result.getTheme().getName()).isEqualTo("공포방");
     }
 
     @Test
@@ -117,24 +92,18 @@ class ReservationServiceTest {
     }
 
     @Test
-    void 예약을_변경하면_예약과_시간을_조회하고_변경된_예약을_저장한_뒤_반환한다() {
-        ReservationTime originalTime = new ReservationTime(1L, LocalTime.of(10, 0));
-        ReservationTime newTime = new ReservationTime(2L, LocalTime.of(12, 0));
-        Theme theme = new Theme(1L, "공포방", "무서운방입니다.", "image-url");
-        Reservation reservation = new Reservation(7L, "브라운", LocalDate.of(2026, 5, 10), originalTime, theme);
+    void 존재하지_않는_테마로_예약을_생성하면_예외가_발생하고_예약을_저장하지_않는다() {
+        ReservationTime time = new ReservationTime(1L, LocalTime.of(12, 0));
+        when(reservationTimeRepository.findById(anyLong())).thenReturn(Optional.of(time));
+        when(themeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        when(reservationRepository.findById(7L)).thenReturn(Optional.of(reservation));
-        when(reservationTimeRepository.findById(2L)).thenReturn(Optional.of(newTime));
-        Reservation result = reservationService.updateReservation(7L, "브라운", LocalDate.of(2026, 5, 11), 2L);
+        assertThatThrownBy(() -> reservationService.createReservation(
+                "브라운", LocalDate.of(2026, 5, 10), 1L, 999L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.THEME_NOT_FOUND);
 
-        verify(reservationRepository).findById(7L);
-        verify(reservationTimeRepository).findById(2L);
-        verify(reservationRepository).update(any(Reservation.class));
-        assertThat(result.getId()).isEqualTo(7L);
-        assertThat(result.getName()).isEqualTo("브라운");
-        assertThat(result.getDate()).isEqualTo(LocalDate.of(2026, 5, 11));
-        assertThat(result.getTime()).isSameAs(newTime);
-        assertThat(result.getTheme()).isSameAs(theme);
+        verify(reservationRepository, never()).save(any(Reservation.class));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package roomescape.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -32,9 +31,6 @@ class AdminControllerTest {
 
     @MockitoBean
     private ReservationTimeService reservationTimeService;
-
-    @InjectMocks
-    private AdminController adminController;
 
     @Test
     void 시간_생성_요청을_받으면_DTO의_시작_시간을_Service에_전달하고_결과를_반환한다() throws Exception {
